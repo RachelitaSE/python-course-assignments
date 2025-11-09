@@ -25,4 +25,5 @@ Adjusted (CPI): 979.47 ILS
 ============================
 ```
 I used ChatGPT-5 to build all the versions.
+The gui doesn't work for me as of now. I am still working on it. 
 
