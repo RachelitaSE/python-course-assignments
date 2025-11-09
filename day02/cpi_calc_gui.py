@@ -9,20 +9,28 @@ class CPIAdjusterExcel:
         if not os.path.exists(excel_file):
             raise FileNotFoundError(f"Excel file '{excel_file}' not found.")
 
+        # Load data
         self.df = pd.read_excel(excel_file)
         if "date" not in self.df.columns or "cpi" not in self.df.columns:
             raise ValueError("Excel file must contain 'date' and 'cpi' columns.")
 
+        # Normalize and prepare
         self.df["date"] = pd.to_datetime(self.df["date"], errors="coerce")
         self.df = self.df.dropna(subset=["date", "cpi"])
         self.df.set_index("date", inplace=True)
         self.df.sort_index(inplace=True)
 
     def get_cpi(self, date: datetime.date) -> float:
+        """Return CPI for the given month (if not found, use previous month)."""
         month_start = pd.Timestamp(date.year, date.month, 1)
-        if month_start not in self.df.index:
-            raise ValueError(f"No CPI data found for {month_start.strftime('%Y-%m')}")
-        return float(self.df.loc[month_start, "cpi"])
+        if month_start in self.df.index:
+            return float(self.df.loc[month_start, "cpi"])
+        else:
+            # Fallback: use previous available CPI
+            previous = self.df.loc[:month_start]
+            if not previous.empty:
+                return float(previous["cpi"].iloc[-1])
+            raise ValueError(f"No CPI data available for {month_start.strftime('%Y-%m')} or earlier.")
 
     def adjust(self, amount: float, date_from: datetime.date, date_to: datetime.date) -> float:
         if date_to < date_from:
@@ -35,41 +43,49 @@ class CPIAdjusterExcel:
 
 
 # ---------------------------
-# GUI Implementation
+# GUI Application
 # ---------------------------
 class CPIApp:
     def __init__(self, root):
         self.root = root
         self.root.title("💰 CPI Adjustment Calculator")
-        self.root.geometry("420x320")
+        self.root.geometry("450x360")
         self.root.resizable(False, False)
 
+        # Variables
         self.excel_file = tk.StringVar(value="cpi_data_fixed.xlsx")
 
-        # --- UI Elements ---
-        tk.Label(root, text="CPI Excel File:").pack(pady=(15, 0))
-        tk.Entry(root, textvariable=self.excel_file, width=40).pack()
-        tk.Button(root, text="Browse", command=self.browse_file).pack(pady=(0, 10))
+        # --- Widgets ---
+        tk.Label(root, text="Select CPI Excel File:", font=("Arial", 10, "bold")).pack(pady=(15, 0))
+        frame = tk.Frame(root)
+        frame.pack()
+        tk.Entry(frame, textvariable=self.excel_file, width=40).pack(side=tk.LEFT, padx=5)
+        tk.Button(frame, text="Browse", command=self.browse_file).pack(side=tk.LEFT)
 
-        tk.Label(root, text="Amount (ILS):").pack()
-        self.amount_entry = tk.Entry(root)
-        self.amount_entry.pack(pady=(0, 10))
+        # Amount input
+        tk.Label(root, text="Amount (ILS):").pack(pady=(10, 0))
+        self.amount_entry = tk.Entry(root, width=20)
+        self.amount_entry.pack()
 
-        tk.Label(root, text="Start Date (YYYY-MM-DD):").pack()
-        self.start_entry = tk.Entry(root)
-        self.start_entry.pack(pady=(0, 10))
+        # Start date input
+        tk.Label(root, text="Start Date (YYYY-MM-DD):").pack(pady=(10, 0))
+        self.start_entry = tk.Entry(root, width=20)
+        self.start_entry.pack()
 
-        tk.Label(root, text="End Date (YYYY-MM-DD):").pack()
-        self.end_entry = tk.Entry(root)
-        self.end_entry.pack(pady=(0, 10))
+        # End date input
+        tk.Label(root, text="End Date (YYYY-MM-DD):").pack(pady=(10, 0))
+        self.end_entry = tk.Entry(root, width=20)
+        self.end_entry.pack()
 
-        tk.Button(root, text="Calculate", command=self.calculate).pack(pady=(10, 5))
+        # Calculate button
+        tk.Button(root, text="Calculate", command=self.calculate, bg="#0078D7", fg="white", width=15).pack(pady=15)
 
-        self.result_label = tk.Label(root, text="", font=("Arial", 12, "bold"), fg="green")
+        # Result label
+        self.result_label = tk.Label(root, text="", font=("Arial", 12, "bold"), fg="green", wraplength=400, justify="center")
         self.result_label.pack(pady=10)
 
     def browse_file(self):
-        """Let user select an Excel file."""
+        """Let the user pick an Excel file."""
         filename = filedialog.askopenfilename(
             title="Select CPI Excel File",
             filetypes=[("Excel Files", "*.xlsx"), ("All Files", "*.*")]
@@ -81,6 +97,8 @@ class CPIApp:
         """Perform CPI adjustment."""
         try:
             excel_file = self.excel_file.get().strip()
+            if not excel_file:
+                raise ValueError("Please select an Excel file.")
             amount = float(self.amount_entry.get().strip())
             date_from = datetime.datetime.strptime(self.start_entry.get().strip(), "%Y-%m-%d").date()
             date_to = datetime.datetime.strptime(self.end_entry.get().strip(), "%Y-%m-%d").date()
@@ -99,7 +117,7 @@ class CPIApp:
         except ValueError as e:
             messagebox.showerror("Input Error", str(e))
         except Exception as e:
-            messagebox.showerror("Error", f"An unexpected error occurred:\n{e}")
+            messagebox.showerror("Error", f"Unexpected error:\n{e}")
 
 
 # ---------------------------
