@@ -5,3 +5,5 @@ and outputing and excel file that is easy to read.
 The second step caculate the change in the realistic value of the money due to the change in the cpi. 
 Input is : amount (in ILS), initial date, end date
 Output : the realistic value of the money in ILS
+
+* I am not sure the Gui works properly - I am working on it. 
