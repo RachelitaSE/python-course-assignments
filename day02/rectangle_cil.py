@@ -1,6 +1,6 @@
 import argparse
 import sys
-from shapes import *
+from shapes import rectangle_area
 
 
 
