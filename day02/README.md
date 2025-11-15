@@ -1,6 +1,6 @@
 # Consumer Price Index calculator
 
-I wrote a Python app that calculates and prints the realitic value of an amount of money  linked to the consumer price index, helping you track the realistic value of your money. The code cpi_data.py uses the following url ("https://mashcantaman.co.il/%D7%9E%D7%93%D7%93-%D7%94%D7%9E%D7%97%D7%99%D7%A8%D7%99%D7%9D-%D7%9C%D7%A6%D7%A8%D7%9B%D7%9F/") to get the cpi of the last 20 years, and outputs an excel file that is easy to read.
+I wrote a Python app that calculates and prints the realitic value of an amount of money  linked to the consumer price index, helping you track the realistic value of your money. The code cpi_data.py uses the following url [cpi_data_web]("https://mashcantaman.co.il/%D7%9E%D7%93%D7%93-%D7%94%D7%9E%D7%97%D7%99%D7%A8%D7%99%D7%9D-%D7%9C%D7%A6%D7%A8%D7%9B%D7%9F/") to get the cpi of the last 20 years, and outputs an excel file that is easy to read.
 
 Then cpi_calc.py is a python script that you can change the inputs in the script iself - it reads the cli_data.xlsx that cpi_data.py created. Input is : amount (in ILS), initial date, end date
 Output : the realistic value of the money in ILS
