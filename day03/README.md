@@ -51,3 +51,10 @@ test_cpi_logic.py::test_adjust_cpi_increase PASSED
 test_cpi_logic.py::test_adjust_cpi_reverse_dates PASSED
 ============================== 4 passed in 0.02s ==============================
 ```
+
+This version was created with assistance from ChatGPT (GPT-5) to:
+* Move the computation ("business logic") into a separate file (cpi_logic.py)
+* Simplify the main program to call that logic
+* Add automated tests with pytest
+
+I didn't find a python module that calculates the Israeli CPI inflation rate. There is a module that calculates the CPI of regions in the USA, added in cpi_module.py. 
