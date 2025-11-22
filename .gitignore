@@ -1,0 +1,11 @@
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Local secrets
+.env
+secrets.json
+
+# Day04 data output
+/day04/data/
