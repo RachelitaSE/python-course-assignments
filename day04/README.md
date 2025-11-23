@@ -35,6 +35,8 @@ No authentication or API key is required.
 - Data files are saved under `data/`  
   (this folder is ignored by Git)
 
+- need to install requests, pathlib, csv, json, typing if it is not installed
+
 ## How to run
 For example:
 ```
