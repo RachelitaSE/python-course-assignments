@@ -9,3 +9,5 @@ secrets.json
 
 # Day04 data output
 /day04/data/
+.env
+secrets.json
